@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
-
-app.use(express.json());
+const morgan = require("morgan");
 
 let contacts = [
   {
@@ -40,6 +39,11 @@ const generateId = () => {
   return Math.floor(Math.random() * Math.floor(1000000));
 };
 
+// Middleware
+app.use(express.json());
+app.use(morgan("tiny"));
+
+// Routes
 app.get("/", (req, res) => {
   res.send("<h1>Phonebook</h1>");
 });
@@ -77,9 +81,15 @@ app.delete("/api/contacts/:id", (req, res) => {
 app.post("/api/contacts", (req, res) => {
   const body = req.body;
 
-  if (!body.name) {
+  if (!body.name || !body.number) {
     return res.status(400).json({
       error: "content missing"
+    });
+  }
+
+  if (contacts.find(contact => contact.name === body.name)) {
+    return res.status(400).json({
+      error: "contact already exists"
     });
   }
 
