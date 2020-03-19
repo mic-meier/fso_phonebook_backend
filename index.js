@@ -36,6 +36,10 @@ let contacts = [
   }
 ];
 
+const generateId = () => {
+  return Math.floor(Math.random() * Math.floor(1000000));
+};
+
 app.get("/", (req, res) => {
   res.send("<h1>Phonebook</h1>");
 });
@@ -68,6 +72,26 @@ app.delete("/api/contacts/:id", (req, res) => {
   contacts = contacts.filter(contact => contact.id !== contactId);
 
   res.status(204).end();
+});
+
+app.post("/api/contacts", (req, res) => {
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "content missing"
+    });
+  }
+
+  const contact = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  };
+
+  contacts = contacts.concat(contact);
+
+  res.json(contacts);
 });
 
 const PORT = 3001;
