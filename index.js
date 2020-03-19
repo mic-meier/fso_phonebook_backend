@@ -63,6 +63,13 @@ app.get("/api/contacts/:id", (req, res) => {
   }
 });
 
+app.delete("/api/contacts/:id", (req, res) => {
+  const contactId = Number(req.params.id);
+  contacts = contacts.filter(contact => contact.id !== contactId);
+
+  res.status(204).end();
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
