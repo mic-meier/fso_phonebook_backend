@@ -1,40 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-
-let contacts = [
-  {
-    name: "Arto Hellas",
-    number: "78-77-78-78",
-    id: 1
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4
-  },
-  {
-    name: "Clark Kent",
-    number: "88-888-88-88-88",
-    id: 5
-  },
-  {
-    name: "Bruce Wayne",
-    number: "79*77*66*66",
-    id: 6
-  }
-];
+const Contact = require("./models/contact");
 
 const generateId = () => {
   return Math.floor(Math.random() * Math.floor(1000000));
@@ -55,7 +24,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/contacts", (req, res) => {
-  res.json(contacts);
+  Contact.find({}).then(contacts => {
+    res.json(contacts.map(contact => contact.toJSON()));
+  });
 });
 
 app.get("/info", (req, res) => {
