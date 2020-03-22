@@ -74,6 +74,21 @@ app.post("/api/contacts", (req, res) => {
   });
 });
 
+app.put("/api/contacts/:id", (req, res, next) => {
+  const body = req.body;
+
+  const contact = {
+    name: body.name,
+    number: body.number
+  };
+
+  Contact.findByIdAndUpdate(req.params.id, contact, { new: true })
+    .then(udpatedContact => {
+      res.json(udpatedContact.toJSON());
+    })
+    .catch(error => next(error));
+});
+
 // Error handling
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
