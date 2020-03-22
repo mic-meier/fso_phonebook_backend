@@ -58,27 +58,23 @@ app.delete("/api/contacts/:id", (req, res) => {
 app.post("/api/contacts", (req, res) => {
   const body = req.body;
 
-  if (!body.name || !body.number) {
-    return res.status(400).json({
-      error: "content missing"
-    });
+  if (body.name === undefined) {
+    return res.status(400).json({ error: "Contact name missing" });
   }
 
-  if (contacts.find(contact => contact.name === body.name)) {
-    return res.status(400).json({
-      error: "contact already exists"
-    });
+  if (body.number === undefined) {
+    res.status(400).json({ error: "Contact number missing" });
   }
 
-  const contact = {
+  const contact = new Contact({
     name: body.name,
     number: body.number,
-    id: generateId()
-  };
+    date: new Date()
+  });
 
-  contacts = contacts.concat(contact);
-
-  res.json(contacts);
+  contact.save().then(savedContact => {
+    res.json(savedContact.toJSON());
+  });
 });
 
 const PORT = process.env.PORT || 3001;
