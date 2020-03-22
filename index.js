@@ -26,22 +26,25 @@ app.get("/api/contacts", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(`
-  <div>Phonebook has ${contacts.length} contacts.</div>
-  <br/>
-  <div>${new Date()}</>
-  `);
+  Contact.find({}).then(contacts => {
+    res.send(`
+    <div>Phonebook has ${contacts.length} contacts.</div>
+    <br/>
+    <div>${new Date()}</>
+    `);
+  });
 });
 
-app.get("/api/contacts/:id", (req, res) => {
-  const contactId = Number(req.params.id);
-  const contact = contacts.find(contact => contact.id === contactId);
-
-  if (contact) {
-    res.json(contact);
-  } else {
-    res.status(404).end();
-  }
+app.get("/api/contacts/:id", (req, res, next) => {
+  Contact.findById(req.params.id)
+    .then(contact => {
+      if (contact) {
+        res.json(contact.toJSON());
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(error => next(error));
 });
 
 app.delete("/api/contacts/:id", (req, res, next) => {
