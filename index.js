@@ -48,11 +48,12 @@ app.get("/api/contacts/:id", (req, res) => {
   }
 });
 
-app.delete("/api/contacts/:id", (req, res) => {
-  const contactId = Number(req.params.id);
-  contacts = contacts.filter(contact => contact.id !== contactId);
-
-  res.status(204).end();
+app.delete("/api/contacts/:id", (req, res, next) => {
+  Contact.findByIdAndRemove(req.params.id)
+    .then(result => {
+      res.status(204).end();
+    })
+    .catch(error => next(error));
 });
 
 app.post("/api/contacts", (req, res) => {
