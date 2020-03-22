@@ -5,10 +5,6 @@ const cors = require("cors");
 const morgan = require("morgan");
 const Contact = require("./models/contact");
 
-const generateId = () => {
-  return Math.floor(Math.random() * Math.floor(1000000));
-};
-
 // Middleware
 morgan.token("body", req => JSON.stringify(req.body));
 app.use(cors());
@@ -77,6 +73,17 @@ app.post("/api/contacts", (req, res) => {
     res.json(savedContact.toJSON());
   });
 });
+
+// Error handling
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError" && error.kind === "ObjectId") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
