@@ -23,15 +23,15 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const contactSchema = new mongoose.Schema({
   name: String,
   number: String,
-  date: Date
+  date: Date,
 });
 
 const Contact = mongoose.model("Contact", contactSchema);
 
 if (process.argv.length === 3) {
-  Contact.find({}).then(res => {
+  Contact.find({}).then((res) => {
     console.log("Contacts:");
-    res.forEach(contact => {
+    res.forEach((contact) => {
       console.log(`${contact.name} ${contact.number}`);
     });
     mongoose.connection.close();
@@ -42,10 +42,10 @@ if (process.argv.length === 5) {
   const contact = new Contact({
     name: process.argv[3],
     number: process.argv[4],
-    date: new Date()
+    date: new Date(),
   });
 
-  contact.save().then(res => {
+  contact.save().then(() => {
     console.log("contact saved");
     mongoose.connection.close();
   });

@@ -6,7 +6,7 @@ const morgan = require("morgan");
 const Contact = require("./models/contact");
 
 // Middleware
-morgan.token("body", req => JSON.stringify(req.body));
+morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(cors());
 app.use(express.static("build"));
 app.use(express.json());
@@ -20,13 +20,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/contacts", (req, res) => {
-  Contact.find({}).then(contacts => {
-    res.json(contacts.map(contact => contact.toJSON()));
+  Contact.find({}).then((contacts) => {
+    res.json(contacts.map((contact) => contact.toJSON()));
   });
 });
 
 app.get("/info", (req, res) => {
-  Contact.find({}).then(contacts => {
+  Contact.find({}).then((contacts) => {
     res.send(`
     <div>Phonebook has ${contacts.length} contacts.</div>
     <br/>
@@ -37,22 +37,22 @@ app.get("/info", (req, res) => {
 
 app.get("/api/contacts/:id", (req, res, next) => {
   Contact.findById(req.params.id)
-    .then(contact => {
+    .then((contact) => {
       if (contact) {
         res.json(contact.toJSON());
       } else {
         res.status(404).end();
       }
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
 app.delete("/api/contacts/:id", (req, res, next) => {
   Contact.findByIdAndRemove(req.params.id)
-    .then(result => {
+    .then(() => {
       res.status(204).end();
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
 app.post("/api/contacts", (req, res, next) => {
@@ -69,15 +69,15 @@ app.post("/api/contacts", (req, res, next) => {
   const contact = new Contact({
     name: body.name,
     number: body.number,
-    date: new Date()
+    date: new Date(),
   });
 
   contact
     .save()
-    .then(savedContact => {
+    .then((savedContact) => {
       res.json(savedContact.toJSON());
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
 app.put("/api/contacts/:id", (req, res, next) => {
@@ -85,14 +85,14 @@ app.put("/api/contacts/:id", (req, res, next) => {
 
   const contact = {
     name: body.name,
-    number: body.number
+    number: body.number,
   };
 
   Contact.findByIdAndUpdate(req.params.id, contact, { new: true })
-    .then(udpatedContact => {
+    .then((udpatedContact) => {
       res.json(udpatedContact.toJSON());
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
 // Error handling
