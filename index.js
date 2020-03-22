@@ -55,7 +55,7 @@ app.delete("/api/contacts/:id", (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.post("/api/contacts", (req, res) => {
+app.post("/api/contacts", (req, res, next) => {
   const body = req.body;
 
   if (body.name === undefined) {
@@ -72,9 +72,12 @@ app.post("/api/contacts", (req, res) => {
     date: new Date()
   });
 
-  contact.save().then(savedContact => {
-    res.json(savedContact.toJSON());
-  });
+  contact
+    .save()
+    .then(savedContact => {
+      res.json(savedContact.toJSON());
+    })
+    .catch(error => next(error));
 });
 
 app.put("/api/contacts/:id", (req, res, next) => {
@@ -98,6 +101,8 @@ const errorHandler = (error, req, res, next) => {
 
   if (error.name === "CastError" && error.kind === "ObjectId") {
     return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).send({ error: "Name must be unique" });
   }
   next(error);
 };
